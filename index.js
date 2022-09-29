@@ -1,4 +1,4 @@
-var seneca = require('seneca')().use('product-management-require')
+var seneca = require('seneca')().use('product-management')
 seneca.use('seneca-entity');
 var products = {
     product:"Laptop",
