@@ -19,8 +19,9 @@ var plugin = function(options){
 module.exports = plugin;
 
 var seneca = require('seneca')()
-seneca.use('seneca-entity');
 seneca.use(plugin);
+
+seneca.use('seneca-entity');
 
 seneca.add('role:api, cmd:add-product',function(args,done){
     console.log("-->cmd: add-product");
@@ -30,7 +31,7 @@ seneca.add('role:api, cmd:add-product',function(args,done){
         category:args.category
     }
     console.log("--> products "+JSON.stringify(products));
-    seneca.act({role:'products',cmd:'add',products},function(err,msg){
+    seneca.act({role:'products',cmd:'add',data:products},function(err,msg){
         console.log(msg);
         done(err,msg);
     });
@@ -59,7 +60,7 @@ seneca.act('role:web',{
         prefix:'/prod',
         pin:{role:'api',cmd:'*'},
         map:{
-            'add-product':{GET:true,POST:true},
+            'add-product':{POST:true},
             'get-all-products':{GET:true},
             'get-product':{GET:true, },
             'delete-product':{GET:true, }
@@ -78,7 +79,7 @@ function countMiddleware(req,res,next){
 }
 var express = require('express');
 var app = express();
-//app.use(countMiddleware);
+app.use(countMiddleware);
 app.use(require("body-parser").json())
 app.use(seneca.export('web'));
 
