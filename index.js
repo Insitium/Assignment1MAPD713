@@ -7,13 +7,13 @@ var plugin = function(options){
     });
 
     seneca.add({role:'products', cmd:'get'},function(msg, respond){
-        this.make('products').load$(msg.data.user_id, respond);
+        this.make('products').load$(msg.data.product_id, respond);
     });
     seneca.add({role:'products', cmd:'get-all'},function(msg, respond){
         this.make('products').list$({},respond);
     });
     seneca.add({role:'products', cmd:'delete'},function(msg, respond){
-        this.make('products').remove$(msg.data.user_id, respond);
+        this.make('products').remove$(msg.data.product_id, respond);
     });
 }
 module.exports = plugin;
@@ -32,6 +32,7 @@ seneca.add('role:api, cmd:add-product',function(args,done){
     }
     console.log("--> products "+JSON.stringify(products));
     seneca.act({role:'products',cmd:'add',data:products},function(err,msg){
+        console.log("products POST: Received request of adding");
         console.log(msg);
         done(err,msg);
     });
@@ -40,15 +41,25 @@ seneca.add('role:api, cmd:add-product',function(args,done){
 seneca.add('role:api, cmd:get-all-products',function(args, done){
     console.log("--> cmd:get-all-products");
     seneca.act({role:'products',cmd: 'get-all'},function(err,msg){
+        console.log("products GET: sending response");
         console.log(msg);
         done(err,msg);
     });
 });
 seneca.add('role:api, cmd:get-product',function(args, done){
-    console.log("--> cmd:get-product,args.user_id: "+args.user_id);
-    seneca.act({role:'products',cmd: 'get',data:{user_id: args.user_id}},function(err,msg){
+    console.log("--> cmd:get-product,args.product_id: "+args.product_id);
+    seneca.act({role:'products',cmd: 'get',data:{product_id: args.product_id}},function(err,msg){
+        console.log("product GET: sending response")
         console.log(msg);
         done(err,msg);
+    });
+});
+
+seneca.add('role:api, cmd:delete-product', function (args, done) {
+    console.log("--> cmd:delete-product, args.product_id: " + args.product_id);
+    seneca.act({ role: 'product', cmd: 'get', data: { product_id: args.product_id } }, function (err, msg) {
+        console.log(msg);
+        done(err, msg);
     });
 });
 seneca.add('role:api,cmd:delete-all-products',function(args,done){
@@ -63,7 +74,7 @@ seneca.act('role:web',{
             'add-product':{POST:true},
             'get-all-products':{GET:true},
             'get-product':{GET:true, },
-            'delete-product':{GET:true, }
+            'delete-product':{GET:true }
         }
     }
 })
@@ -88,5 +99,5 @@ console.log("Server Listening on localhost: 3000 ...");
 console.log("--------requests--------------------");
 console.log("http://localhost:3000/prod/add-product?product=mobile&price=300&category=phone");
 console.log("http://localhost:3000/prod/get-all-products");
-console.log("http://localhost:3000/prod/get-product?user-id=1245");
-console.log("http://localhost:3000/prod/delete-product?user-id = 1245");
+console.log("http://localhost:3000/prod/get-product?product_id=wwgw11");
+console.log("http://localhost:3000/prod/delete-product?product_id = 1245");
