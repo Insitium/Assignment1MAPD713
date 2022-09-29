@@ -43,7 +43,7 @@ seneca.add('role:api, cmd:get-all-products',function(args, done){
         done(err,msg);
     });
 });
-eneca.add('role:api, cmd:get-product',function(args, done){
+seneca.add('role:api, cmd:get-product',function(args, done){
     console.log("--> cmd:get-product,args.user_id: "+args.user_id);
     seneca.act({role:'products',cmd: 'get',data:{user_id: args.user_id}},function(err,msg){
         console.log(msg);
@@ -76,10 +76,10 @@ function countMiddleware(req,res,next){
     console.log("Processed Request Count--> Get: "+ countGET+" , Post: "+ countPOST);
     if(next)next();
 }
-var express = requrie('express');
+var express = require('express');
 var app = express();
 //app.use(countMiddleware);
-app.use(requrie("body-parser").json())
+app.use(require("body-parser").json())
 app.use(seneca.export('web'));
 
 app.listen(3000)
